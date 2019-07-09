@@ -4,7 +4,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import StandardOptions
 
 project_id = 'webs-clientes-1537993794326'
-bigquery_dataset_name = 'dation_data_poc' # needs to exist 
+bigquery_dataset_name = 'dation_data_poc'
 table_name = 'test_urban'
 bucket_name = 'urbandata-poc'
 json_file_gcs_path = 'gs://urbandata-poc/business.json'
@@ -33,7 +33,7 @@ p = beam.Pipeline(options=options)
                                                        project=project_id, 
                                                        schema=schema, 
                                                        create_disposition='CREATE_IF_NEEDED',
-                                                       write_disposition='WRITE_EMPTY'))
+                                                       write_disposition='WRITE_TRUNCATE'))
 )
 
 p.run()
