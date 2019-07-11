@@ -10,4 +10,21 @@ job_name_business = 'job-business'
 job_name_review = 'job-review'
 job_name_analytics = 'job-analytics'
 
-schema_business = 'business_id:STRING,name:STRING'
+schema_business = { "fields": [
+ { "name": "business_id", "type": "STRING" },
+ { "name": "name", "type": "STRING" }, 
+ { "name": "address", "type": "STRING" },
+ { "name": "city", "type": "STRING" },
+ { "name": "state", "type": "STRING" },
+ { "name": "postal_code", "type": "INTEGER" },
+ { "name": "is_open", "type": "BOOLEAN" },
+ { "name": "hours", "type": "RECORD", "fields" : [
+    { "name": "Monday", "type": "STRING" },
+    { "name": "Tuesday", "type": "STRING" },
+    { "name": "Wednesday", "type": "STRING" },
+    { "name": "Thursday", "type": "STRING" },
+    { "name": "Friday", "type": "STRING" },
+    { "name": "Saturday", "type": "STRING" },
+    { "name": "Sunday", "type": "STRING" }
+    ] }  
+] }  

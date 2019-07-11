@@ -10,7 +10,11 @@ job_name_unique = '{}-{}'.format(cfg.job_name_business, random.randint(1,100))
 def json_processor(row):
     import json
     d = json.loads(row)
-    return {'business_id': d['business_id'], 'name': d['name']}
+    return {'business_id': d['business_id'], 'name': d['name'], 'address':d['address'],
+     'city':d['city'], 'state':d['state'], 'postal_code':d['postal_code'], 'is_open':d['is_open'], 
+     'hours.Monday':d['hours']['Monday'], 'hours.Tuesday':d['hours']['Tuesday'], 'hours.Wednesday':d['hours']['Wednesday'], 
+     'hours.Thursday':d['hours']['Thursday'], 'hours.Friday':d['hours']['Friday'], 'hours.Saturday':d['hours']['Saturday'],
+     'hours.Sunday':d['hours']['Sunday']}
 
 options = beam.options.pipeline_options.PipelineOptions()
 google_cloud_options = options.view_as(GoogleCloudOptions)
