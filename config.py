@@ -1,6 +1,7 @@
 project_id = 'webs-clientes-1537993794326'
 bigquery_dataset_name = 'dation_data_poc'
-table_name = 'test_urban'
+table_business = 'urban_business'
+table_review = 'urban_review'
 bucket_name = 'urbandata-poc'
 business_json = 'business_temp.json'
 review_json = 'review_temp.json'
@@ -27,4 +28,13 @@ schema_business = { "fields": [
     { "name": "Saturday", "type": "STRING" },
     { "name": "Sunday", "type": "STRING" }
     ] }  
+] }  
+
+
+schema_review = { "fields": [
+ { "name": "review_id", "type": "STRING" },
+ { "name": "business_id", "type": "STRING" },
+ { "name": "stars", "type": "INTEGER" },
+ { "name": "date", "type": "STRING" },
+ { "name": "cool", "type": "INTEGER" }
 ] }  
