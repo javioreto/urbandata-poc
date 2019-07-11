@@ -2,13 +2,10 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import GoogleCloudOptions
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import StandardOptions
+import config as cfg
+import random
 
-project_id = 'webs-clientes-1537993794326'
-bigquery_dataset_name = 'dation_data_poc'
-table_name = 'test_urban'
-bucket_name = 'urbandata-poc'
-json_file_gcs_path = 'gs://urbandata-poc/business.json'
-schema = "business_id:STRING,name:STRING"
+job_name_unique = '{}-{}'.format(cfg.job_name_business, random.randint(1,100))
 
 def json_processor(row):
     import json
@@ -17,21 +14,21 @@ def json_processor(row):
 
 options = beam.options.pipeline_options.PipelineOptions()
 google_cloud_options = options.view_as(GoogleCloudOptions)
-google_cloud_options.project = project_id
-google_cloud_options.job_name = "myjob1"
-google_cloud_options.staging_location = 'gs://{}/binaries'.format(bucket_name)
-google_cloud_options.temp_location = 'gs://{}/temp'.format(bucket_name)
+google_cloud_options.project = cfg.project_id
+google_cloud_options.job_name = job_name_unique
+google_cloud_options.staging_location = 'gs://{}/binaries'.format(cfg.bucket_name)
+google_cloud_options.temp_location = 'gs://{}/temp'.format(cfg.bucket_name)
 options.view_as(StandardOptions).runner = 'DataflowRunner'
-google_cloud_options.region = "europe-west1"
+google_cloud_options.region = cfg.region
 
 p = beam.Pipeline(options=options)
 
-(p | "read_from_gcs" >> beam.io.ReadFromText(json_file_gcs_path)
+(p | "read_from_gcs" >> beam.io.ReadFromText('gs://{}/{}'.format(cfg.bucket_name, cfg.business_json))
    | "json_processor" >> beam.Map(json_processor)
-   | "write_to_bq" >> beam.io.Write(beam.io.gcp.bigquery.WriteToBigQuery(table=table_name, 
-                                                       dataset=bigquery_dataset_name, 
-                                                       project=project_id, 
-                                                       schema=schema, 
+   | "write_to_bq" >> beam.io.Write(beam.io.gcp.bigquery.WriteToBigQuery(table=cfg.table_name, 
+                                                       dataset=cfg.bigquery_dataset_name, 
+                                                       project=cfg.project_id, 
+                                                       schema=cfg.schema_business, 
                                                        create_disposition='CREATE_IF_NEEDED',
                                                        write_disposition='WRITE_TRUNCATE'))
 )
