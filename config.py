@@ -11,6 +11,8 @@ job_name_business = 'job-business'
 job_name_review = 'job-review'
 job_name_analytics = 'job-analytics'
 
+output1 = 'output1.json'
+
 schema_business = { "fields": [
  { "name": "business_id", "type": "STRING" },
  { "name": "name", "type": "STRING" }, 
