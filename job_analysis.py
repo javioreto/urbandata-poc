@@ -44,6 +44,29 @@ p = beam.Pipeline(options=options)
 
 p.run()
 
+
+p = beam.Pipeline(options=options)
+
+(p  | 'Median and p95 closing time' >> beam.io.Read(beam.io.BigQuerySource(
+        query='SELECT address, city, state, AVG( '\
+                '((CAST(SPLIT(SPLIT(hours.Monday,"-")[OFFSET(1)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Monday,"-")[OFFSET(1)],":")[OFFSET(1)] AS INT64))+ '\
+                '((CAST(SPLIT(SPLIT(hours.Tuesday,"-")[OFFSET(1)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Tuesday,"-")[OFFSET(1)],":")[OFFSET(1)] AS INT64))+ '\
+                '((CAST(SPLIT(SPLIT(hours.Wednesday,"-")[OFFSET(1)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Wednesday,"-")[OFFSET(1)],":")[OFFSET(1)] AS INT64))+ '\
+                '((CAST(SPLIT(SPLIT(hours.Thursday,"-")[OFFSET(1)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Thursday,"-")[OFFSET(1)],":")[OFFSET(1)] AS INT64))+ '\
+                '((CAST(SPLIT(SPLIT(hours.Friday,"-")[OFFSET(1)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Friday,"-")[OFFSET(1)],":")[OFFSET(1)] AS INT64)) '\
+                ')/300 AS opening_avg FROM `{}.{}.{}` '\
+                'WHERE is_open = 1 AND '\
+                'hours IS NOT NULL AND  '\
+                'hours.Monday != "0:0-0:0" '\
+                'GROUP BY  address, city, state;'.format(cfg.project_id,cfg.bigquery_dataset_name,cfg.table_business),
+        use_standard_sql=True))
+    | 'Write output to file' >> WriteToText(file_path_prefix='gs://{}/{}'.format(cfg.bucket_name, cfg.output2),
+                                             num_shards=1,
+                                             header='Median and p95 closing time')
+)
+
+p.run()
+
 p = beam.Pipeline(options=options)
 
 (p  | 'Businesses open past 21' >> beam.io.Read(beam.io.BigQuerySource(
