@@ -25,7 +25,7 @@ google_cloud_options.region = cfg.region
 p = beam.Pipeline(options=options)
 
 (p  | 'Median and p95 opening time' >> beam.io.Read(beam.io.BigQuerySource(
-        query='SELECT address, city, state, AVG( '\
+        query='SELECT postal_code, city, state, AVG( '\
                 '((CAST(SPLIT(SPLIT(hours.Monday,"-")[OFFSET(0)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Monday,"-")[OFFSET(0)],":")[OFFSET(1)] AS INT64))+ '\
                 '((CAST(SPLIT(SPLIT(hours.Tuesday,"-")[OFFSET(0)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Tuesday,"-")[OFFSET(0)],":")[OFFSET(1)] AS INT64))+ '\
                 '((CAST(SPLIT(SPLIT(hours.Wednesday,"-")[OFFSET(0)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Wednesday,"-")[OFFSET(0)],":")[OFFSET(1)] AS INT64))+ '\
@@ -48,7 +48,7 @@ p.run()
 p = beam.Pipeline(options=options)
 
 (p  | 'Median and p95 closing time' >> beam.io.Read(beam.io.BigQuerySource(
-        query='SELECT address, city, state, AVG( '\
+        query='SELECT postal_code, city, state, AVG( '\
                 '((CAST(SPLIT(SPLIT(hours.Monday,"-")[OFFSET(1)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Monday,"-")[OFFSET(1)],":")[OFFSET(1)] AS INT64))+ '\
                 '((CAST(SPLIT(SPLIT(hours.Tuesday,"-")[OFFSET(1)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Tuesday,"-")[OFFSET(1)],":")[OFFSET(1)] AS INT64))+ '\
                 '((CAST(SPLIT(SPLIT(hours.Wednesday,"-")[OFFSET(1)],":")[OFFSET(0)] AS INT64)*60)+CAST(SPLIT(SPLIT(hours.Wednesday,"-")[OFFSET(1)],":")[OFFSET(1)] AS INT64))+ '\
