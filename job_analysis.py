@@ -87,3 +87,23 @@ p = beam.Pipeline(options=options)
 )
 
 p.run()
+
+p = beam.Pipeline(options=options)
+
+(p  | 'Cool review' >> beam.io.Read(beam.io.BigQuerySource(
+        query='SELECT business.business_id, business.postal_code, business.city, '\
+                'business.state, count(review.cool) as cool_total '\
+                'FROM `{0}.{1}.{2}` as business '\
+                'LEFT JOIN `{0}.{1}.{3}` as review '\
+                'ON (business.business_id = review.business_id) '\
+                'WHERE review.cool = 1 '\
+                'AND business.hours.sunday is null '\
+                'GROUP BY 1,2,3,4 '\
+                'ORDER BY 2,3,4;'.format(cfg.project_id,cfg.bigquery_dataset_name,cfg.table_business,cfg.table_review),
+        use_standard_sql=True))
+    | 'Write output to file' >> WriteToText(file_path_prefix='gs://{}/{}'.format(cfg.bucket_name, cfg.output4),
+                                             num_shards=1,
+                                             header='Cool review')
+)
+
+p.run()
